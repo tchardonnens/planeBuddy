@@ -2,6 +2,7 @@ import FlightForm from '@/components/FlightForm';
 import { PlaneMateCard } from '@/components/PlaneMateCard';
 import UserForm from '@/components/UserForm';
 import { signIn, signOut, useSession } from 'next-auth/react'
+import Head from 'next/head';
 import { FcGoogle } from 'react-icons/fc'
 import useSWR from 'swr';
 
@@ -181,16 +182,42 @@ export default function Home() {
   else {
     return (
       <>
-        <main className="flex min-h-screen flex-col items-center p-12">
-          <h1 className="text-4xl font-bold text-center text-neutral-800">
-            Plane Buddy ✈️
-          </h1>
-          <p className='text-lg font-medium text-neutral-700 pt-4'>Find your BGA plane buddies 😊</p>
-          <button onClick={() => signIn('google')} className='bg-white py-2.5 text-black rounded-md w-64 mt-4 hover:bg-lightGrey transition flex flex-row items-center justify-center gap-4 border-2'>
-            <FcGoogle size={25} />
-            Sign in with Google
-          </button>
-        </main>
+        <Head>
+          <title>Plane Buddy</title>
+          <meta name="description" content="Find your BGA plane buddies" />
+          <link rel="icon" href="/favicon.ico" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta property="og:title" content="Plane Buddy" />
+          <meta property="og:description" content="Find your BGA plane buddies" />
+          <meta property="og:image" content="/plane-buddy.png" />
+          <meta property="og:url" content="https://plane-buddy.vercel.app/" />
+        </Head>
+        <div className="flex flex-col h-screen justify-between">
+          <main className="flex flex-col items-center p-12">
+            <h1 className="text-4xl font-bold text-center text-neutral-800">
+              Plane Buddy ✈️
+            </h1>
+            <p className='text-lg font-medium text-neutral-700 pt-4'>Find your BGA plane buddies 😊</p>
+            <p className='text-md font-medium text-neutral-700 px-5 py-4'>Here&apos;s a little website to find out if someone from the BGA program is on board in your plane!
+              <br />
+              <br />
+              <ul>
+                <li>1️⃣ Sign in with your Berkeley Google Account</li>
+                <li>2️⃣ Fill out your profile</li>
+                <li>3️⃣ Fill out your flight details</li>
+                <li>🎉 See if anyone else is on the same flight as you!</li>
+              </ul>
+            </p>
+            <button onClick={() => signIn('google')} className='bg-white py-2.5 text-black rounded-md w-64 mt-4 hover:bg-lightGrey transition flex flex-row items-center justify-center gap-4 border-2'>
+              <FcGoogle size={25} />
+              Sign in with Google
+            </button>
+          </main>
+          <footer className='h-12 flex flex-row gap-1 justify-center'>
+            Made with ❤️ by <a href='https://thomascdnns.com/' target='_blank' className='text-blue-500 hover:underline'>Thomas Chardonnens</a>, 2023
+          </footer>
+
+        </div>
       </>
     )
   }
