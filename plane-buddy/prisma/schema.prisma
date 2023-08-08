@@ -10,6 +10,7 @@ datasource db {
 model User {
   id              Int          @id @default(autoincrement())
   username        String       @unique
+  email           String       @unique
   instagramHandle String?      @unique
   twitterHandle   String?      @unique
   messengerHandle String?      @unique
@@ -18,14 +19,13 @@ model User {
 }
 
 model Flight {
-  id                    Int          @id @default(autoincrement())
-  planeDepartureDay     DateTime
-  planeDepartureHour    Int
-  planeDepartureAirport String
-  planeArrivalDay       DateTime
-  planeArrivalHour      Int
-  planeArrivalAirport   String
-  userFlights           UserFlight[]
+  id               Int          @id @default(autoincrement())
+  flightNumber     String
+  departureTime    DateTime
+  departureAirport String
+  arrivalTime      DateTime
+  arrivalAirport   String
+  userFlights      UserFlight[]
 }
 
 model UserFlight {
