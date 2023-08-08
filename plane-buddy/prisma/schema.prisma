@@ -11,10 +11,10 @@ model User {
   id              Int          @id @default(autoincrement())
   username        String       @unique
   email           String       @unique
-  instagramHandle String?      @unique
-  twitterHandle   String?      @unique
-  messengerHandle String?      @unique
-  wechatHandle    String?      @unique
+  instagramHandle String?
+  twitterHandle   String?
+  messengerHandle String?
+  wechatHandle    String?
   userFlights     UserFlight[]
 }
 

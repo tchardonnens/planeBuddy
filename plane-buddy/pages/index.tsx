@@ -3,8 +3,10 @@ import { PlaneMateCard } from '@/components/PlaneMateCard';
 import UserForm from '@/components/UserForm';
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Head from 'next/head';
+import { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc'
 import useSWR from 'swr';
+import { TbLogout } from 'react-icons/tb'
 
 export default function Home() {
 
@@ -39,6 +41,17 @@ export default function Home() {
   const { data: session, status } = useSession()
   const userName = session?.user?.name || "unknown"
   const userEmail = session?.user?.email || "unknown"
+  const [isEditingUser, setIsEditingUser] = useState(false);
+  const [isEditingFlight, setIsEditingFlight] = useState(false);
+
+  const toggleEditUser = () => {
+    setIsEditingUser(prevState => !prevState);
+  }
+
+  const toggleEditFlight = () => {
+    setIsEditingFlight(prevState => !prevState);
+  }
+
 
   const fetcher = async (url: string) => {
     const res = await fetch(url);
@@ -76,6 +89,7 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         console.log("User data saved successfully!");
+        setIsEditingFlight(false);
 
       } else {
         console.error(data.message);
@@ -109,6 +123,7 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         console.log("Flight data saved successfully!");
+        setIsEditingUser(false);
       } else {
         console.error(data.message);
       }
@@ -123,59 +138,92 @@ export default function Home() {
 
   if (status === "authenticated" && !hasFilledProfile(userData) && !hasFilledFlight(flightData)) {
     return (
-      <main className="flex min-h-screen flex-col items-center p-12">
-        <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
-          Hey {userName}! 👋
-        </h1>
-        <UserForm userEmail={userEmail} onSubmit={handleFormSubmit} />
-        <button onClick={() => signOut()} className='bg-white py-2.5 text-black rounded-md w-64 mt-4 hover:bg-lightGrey transition flex flex-row items-center justify-center gap-4 border-2'>
-          <FcGoogle size={25} />
-          Sign out
-        </button>
-      </main>
+      <>
+        <header className="w-full flex flex-row justify-between p-4 bg-white shadow-md">
+          <div className="flex flex-row items-center gap-4">
+            <h1 className="text-2xl font-bold text-neutral-800">Plane Buddy ✈️</h1>
+          </div>
+          <button onClick={() => signOut()} className='bg-white text-black rounded-md flex flex-row items-center justify-center gap-1'>
+            <TbLogout size={25} />
+            Logout
+          </button>
+        </header>
+        <main className="flex min-h-screen flex-col items-center p-12">
+          <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
+            Hey {userName}! 👋
+          </h1>
+          <UserForm userEmail={userEmail} onSubmit={handleFormSubmit} defaultValues={null} />
+        </main>
+      </>
     )
   }
 
   else if (status === "authenticated" && hasFilledProfile(userData) && !hasFilledFlight(flightData)) {
     return (
-      <main className="flex min-h-screen flex-col items-center p-10">
-        <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
-          Hey {userName}! 👋
-        </h1>
-        <FlightForm onSubmit={handleFlightFormSubmit} />
-        <button onClick={() => signOut()} className='bg-white py-2.5 text-black rounded-md w-64 mt-4 hover:bg-lightGrey transition flex flex-row items-center justify-center gap-4 border-2'>
-          <FcGoogle size={25} />
-          Sign out
-        </button>
-      </main>
+      <>
+        <header className="w-full flex flex-row justify-between p-4 bg-white shadow-md">
+          <div className="flex flex-row items-center gap-4">
+            <h1 className="text-2xl font-bold text-neutral-800">Plane Buddy ✈️</h1>
+          </div>
+          <button onClick={() => signOut()} className='bg-white text-black rounded-md flex flex-row items-center justify-center gap-1'>
+            <TbLogout size={25} />
+            Logout
+          </button>
+        </header>
+        <main className="flex min-h-screen flex-col items-center p-10">
+          <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
+            Hey {userName}! 👋
+          </h1>
+          <FlightForm onSubmit={handleFlightFormSubmit} />
+        </main>
+      </>
     )
   }
 
   else if (status === "authenticated" && hasFilledFlight(flightData)) {
     return (
-      <main className="flex min-h-screen flex-col items-center p-12">
-        <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
-          Hey {userName}! 👋
-        </h1>
+      <>
+        <header className="w-full flex flex-row justify-between p-4 bg-white shadow-md">
+          <div className="flex flex-row items-center gap-4">
+            <h1 className="text-2xl font-bold text-neutral-800">Plane Buddy ✈️</h1>
+          </div>
+          <button onClick={() => signOut()} className='bg-white text-black rounded-md flex flex-row items-center justify-center gap-1'>
+            <TbLogout size={25} />
+            Logout
+          </button>
+        </header>
+        <main className="flex min-h-screen flex-col items-center p-12">
 
-        <div className='flex flex-col items-center gap-4'>
-          <h2 className='text-md font-medium text-center text-neutral-800 mb-4'>Your plane mates for the flight <b>{flightData?.flightNumber}</b>:</h2>
-          {planeMates && planeMates.length > 0 ? (
-            <div className='flex flex-col gap-4 w-60'>
-              {planeMates.map((planeMate: User) => (
-                <PlaneMateCard key={planeMate.id} user={planeMate} />
-              ))}
+          <h1 className="text-4xl font-bold text-center text-neutral-800 mb-4">
+            Hey {userName}! 👋
+          </h1>
+          <div className="flex gap-4 mb-8">
+            <button onClick={toggleEditUser} className="bg-neutral-800 text-white rounded px-4 py-2">Edit User Info</button>
+            <button onClick={toggleEditFlight} className="bg-neutral-800 text-white rounded px-4 py-2">Edit Flight Info</button>
+          </div>
+          {isEditingUser && <UserForm userEmail={userEmail} onSubmit={handleFormSubmit} defaultValues={userData} />}
+          {isEditingFlight && <FlightForm onSubmit={handleFlightFormSubmit} defaultValues={flightData} />}
+
+
+          {!isEditingUser && !isEditingFlight && (
+            <div className='flex flex-col items-center gap-4'>
+              <h2 className='text-md font-medium text-center text-neutral-800 mb-4'>Your plane mates for the flight <b>{flightData?.flightNumber}</b>:</h2>
+              {planeMates && planeMates.length > 0 ? (
+                <div className='flex flex-col gap-4 w-60'>
+                  {planeMates.map((planeMate: User) => (
+                    <PlaneMateCard key={planeMate.id} user={planeMate} />
+                  ))}
+                </div>
+              ) : (
+                <p className='text-md font-medium text-neutral-700'>No plane mates found 😢</p>
+              )}
             </div>
-          ) : (
-            <p className='text-md font-medium text-neutral-700'>No plane mates found 😢</p>
           )}
-        </div>
-
-        <button onClick={() => signOut()} className='bg-white py-2.5 text-black rounded-md w-64 mt-4 hover:bg-lightGrey transition flex flex-row items-center justify-center gap-4 border-2'>
-          <FcGoogle size={25} />
-          Sign out
-        </button>
-      </main>
+        </main>
+        <footer className='h-12 flex flex-row gap-1 justify-center'>
+          Made with ❤️ by <a href='https://thomascdnns.com/' target='_blank' className='text-blue-500 hover:underline'>Thomas Chardonnens</a>, 2023
+        </footer>
+      </>
     )
   }
 
